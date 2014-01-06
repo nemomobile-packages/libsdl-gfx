@@ -25,7 +25,7 @@ polygon, etc.) for SDL2.
 %setup -q
 
 %build
-%configure
+%configure --disable-mmx
 make
 
 %install
