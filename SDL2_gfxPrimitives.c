@@ -800,7 +800,7 @@ fixed-point arithmetic by A. Schiffler. The endpoint control allows the
 supression to draw the last pixel useful for rendering continous aa-lines
 with alpha<255.
 
-\param dst The surface to draw on.
+\param renderer The renderer to draw on.
 \param x1 X coordinate of the first point of the aa-line.
 \param y1 Y coordinate of the first point of the aa-line.
 \param x2 X coordinate of the second point of the aa-line.
@@ -830,7 +830,7 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 	yy1 = y2;
 
 	/*
-	* Reorder points if required 
+	* Reorder points to make dy positive 
 	*/
 	if (yy0 > yy1) {
 		tmp = yy0;
@@ -848,6 +848,16 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 	dy = yy1 - yy0;
 
 	/*
+	* Adjust for negative dx and set xdir 
+	*/
+	if (dx >= 0) {
+		xdir = 1;
+	} else {
+		xdir = -1;
+		dx = (-dx);
+	}
+	
+	/*
 	* Check for special cases 
 	*/
 	if (dx == 0) {
@@ -858,7 +868,7 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 		{
 			return (vlineRGBA(renderer, x1, y1, y2, r, g, b, a));
 		} else {
-			if (dy>0) {
+			if (dy > 0) {
 				return (vlineRGBA(renderer, x1, yy0, yy0+dy, r, g, b, a));
 			} else {
 				return (pixelRGBA(renderer, x1, y1, r, g, b, a));
@@ -872,7 +882,7 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 		{
 			return (hlineRGBA(renderer, x1, x2, y1, r, g, b, a));
 		} else {
-			if (dx>0) {
+			if (dx > 0) {
 				return (hlineRGBA(renderer, xx0, xx0+dx, y1, r, g, b, a));
 			} else {
 				return (pixelRGBA(renderer, x1, y1, r, g, b, a));
@@ -885,15 +895,6 @@ int _aalineRGBA(SDL_Renderer * renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint16
 		return (lineRGBA(renderer, x1, y1, x2, y2,  r, g, b, a));
 	}
 
-	/*
-	* Adjust for negative dx and set xdir 
-	*/
-	if (dx >= 0) {
-		xdir = 1;
-	} else {
-		xdir = -1;
-		dx = (-dx);
-	}
 
 	/*
 	* Line is not horizontal, vertical or diagonal (with endpoint)
@@ -2110,7 +2111,10 @@ Note: Determines vertex array and uses polygon or filledPolygon drawing routines
 \param rad Radius in pixels of the pie.
 \param start Starting radius in degrees of the pie.
 \param end Ending radius in degrees of the pie.
-\param color The color value of the pie to draw (0xRRGGBBAA). 
+\param r The red value of the pie to draw. 
+\param g The green value of the pie to draw. 
+\param b The blue value of the pie to draw. 
+\param a The alpha value of the pie to draw.
 \param filled Flag indicating if the pie should be filled (=1) or not (=0).
 
 \returns Returns 0 on success, -1 on failure.
@@ -2526,10 +2530,6 @@ int polygonColor(SDL_Renderer * renderer, const Sint16 * vx, const Sint16 * vy, 
 \param vx Vertex array containing X coordinates of the points of the polygon.
 \param vy Vertex array containing Y coordinates of the points of the polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
-\param r The red value of the polygon to draw. 
-\param g The green value of the polygon to draw. 
-\param b The blue value of the polygon to draw. 
-\param a The alpha value of the polygon to draw.
 
 \returns Returns 0 on success, -1 on failure.
 */
@@ -2762,7 +2762,7 @@ static int gfxPrimitivesPolyAllocatedGlobal = 0;
 
 Note: The last two parameters are optional; but are required for multithreaded operation.  
 
-\param dst The surface to draw on.
+\param renderer The renderer to draw on.
 \param vx Vertex array containing X coordinates of the points of the filled polygon.
 \param vy Vertex array containing Y coordinates of the points of the filled polygon.
 \param n Number of points in the vertex array. Minimum number is 3.
@@ -3390,7 +3390,7 @@ void gfxPrimitivesSetFontRotation(Uint32 rotation)
 /*!
 \brief Draw a character of the currently set font.
 
-\param dst The surface to draw on.
+\param renderer The Renderer to draw on.
 \param x X (horizontal) coordinate of the upper left corner of the character.
 \param y Y (vertical) coordinate of the upper left corner of the character.
 \param c The character to draw.
@@ -4226,7 +4226,7 @@ void _murphyWideline(SDL2_gfxMurphyIterator *m, Sint16 x1, Sint16 y1, Sint16 x2,
 /*!
 \brief Draw a thick line with alpha blending.
 
-\param dst The surface to draw on.
+\param renderer The renderer to draw on.
 \param x1 X coordinate of the first point of the line.
 \param y1 Y coordinate of the first point of the line.
 \param x2 X coordinate of the second point of the line.
@@ -4245,7 +4245,7 @@ int thickLineColor(SDL_Renderer *renderer, Sint16 x1, Sint16 y1, Sint16 x2, Sint
 /*!
 \brief Draw a thick line with alpha blending.
 
-\param dst The surface to draw on.
+\param renderer The renderer to draw on.
 \param x1 X coordinate of the first point of the line.
 \param y1 Y coordinate of the first point of the line.
 \param x2 X coordinate of the second point of the line.
