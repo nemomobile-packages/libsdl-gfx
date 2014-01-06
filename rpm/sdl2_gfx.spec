@@ -25,7 +25,13 @@ polygon, etc.) for SDL2.
 %setup -q
 
 %build
+%ifarch %{ix86} x86_64
+# On X86, build with MMX support
+%configure
+%else
+# On non-X86 architectures, disable MMX
 %configure --disable-mmx
+%endif
 make
 
 %install
