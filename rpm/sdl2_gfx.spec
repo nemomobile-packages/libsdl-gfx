@@ -1,6 +1,6 @@
 Summary: Simple DirectMedia Layer - Graphics Primitives
 Name: SDL2_gfx
-Version: 2.0.0
+Version: 1.0.0
 Release: 1
 Source: %{name}-%{version}.tar.gz
 URL: http://sourceforge.net/projects/sdl2gfx/
