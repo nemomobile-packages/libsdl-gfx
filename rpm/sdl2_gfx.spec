@@ -25,6 +25,8 @@ polygon, etc.) for SDL2.
 %setup -q
 
 %build
+# Fix a build error in OBS (see http://stackoverflow.com/q/10085554)
+autoreconf -fvi
 %ifarch %{ix86} x86_64
 # On X86, build with MMX support
 %configure
